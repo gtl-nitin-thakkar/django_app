@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Question
+from .models import Choice
 
 class QuestionSerializer(serializers.Serializer):
     question_text = serializers.CharField(max_length=200)
@@ -17,4 +18,11 @@ class QuestionSerializer(serializers.Serializer):
             setattr(instance, key, value)
         instance.save()
         return instance
+
+
+class ChoiceSerializer(serializers.Serializer):
+    choice_text = serializers.CharField(max_length=200)
+
+    def create(self, validated_data):
+        return Choice.objects.create(**validated_data)
 
