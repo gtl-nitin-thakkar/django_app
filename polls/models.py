@@ -8,16 +8,20 @@ class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
 
-
     def __str__(self):
         return self.question_text
 
     def was_published_recently(self):
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
-	
-	def verbose_question_text(self):
+
+    def verbose_question_text(self):
         return "Question : %s" % (self.question_text)
-		
+
+    def choices(self):
+        if not hasattr(self, '_choices'):
+            self._choices = self.choice_set.all()
+        return self._choices
+
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -26,3 +30,4 @@ class Choice(models.Model):
 
     def __str__(self):
         return self.choice_text
+
