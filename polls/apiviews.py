@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 from django.http import HttpResponse
@@ -11,13 +12,12 @@ from .serializers import QuestionSerializer
 @api_view(['GET', 'POST'])
 def questions_view(request):
     if request.method == 'GET':
-        return HttpResponse("Not Implemented")
+        questions = Question.objects.all()
+        serializer = QuestionSerializer(questions, many=True)
+        return Response(serializer.data)
     elif request.method == 'POST':
-        if request.method == 'GET':
-            return HttpResponse("Not Implemented")
-        elif request.method == 'POST':
-            serializer = QuestionSerializer(data=request.data)
-            if serializer.is_valid():
-                Question.objects.create(**serializer.validated_data)
-                return Response("Question created", status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = QuestionSerializer(data=request.data)
+        if serializer.is_valid():
+            question = serializer.save()
+            return Response(QuestionSerializer(question).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
