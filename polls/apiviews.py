@@ -33,4 +33,6 @@ def question_detail_view(request, question_id):
             return Response(QuestionSerializer(question).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
-        raise NotImplementedError("DELETE currently not supported")
+        question.delete()
+        return Response("Question deleted", status=status.HTTP_204_NO_CONTENT)
+
